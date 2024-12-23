@@ -1,0 +1,90 @@
+ #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <string>
+using namespace std;
+
+// Function to read CSV file and store it in a 2D vector
+vector<vector<string>> readCSV(const string& filename) {
+    ifstream file(filename);
+    vector<vector<string>> data;
+    string line;
+
+    // Check if file is open
+    if (!file.is_open()) {
+        cout << "Could not open the file!" << endl;
+        return data;
+    }
+
+    // Read file line by line
+    while (getline(file, line)) {
+        stringstream ss(line);
+        string value;
+        vector<string> row;
+
+        // Split line by commas
+        while (getline(ss, value, ',')) {
+            row.push_back(value);
+        }
+        data.push_back(row);
+    }
+    file.close();
+    return data;
+}
+
+// Function to write data to CSV file
+void writeCSV(const string& filename, const vector<vector<string>>& data) {
+    ofstream file(filename);
+
+    // Check if file is open
+    if (!file.is_open()) {
+        cout << "Could not open the file for writing!" << endl;
+        return;
+    }
+
+    // Write each row to the file
+    for (const auto& row : data) {
+        for (size_t i = 0; i < row.size(); ++i) {
+            file << row[i];
+            if (i != row.size() - 1) {
+                file << ",";
+            }
+        }
+        file << endl;
+    }
+    file.close();
+}
+
+// Function to display the contents of the CSV file
+void displayCSV(const vector<vector<string>>& data) {
+    for (const auto& row : data) {
+        for (const auto& value : row) {
+            cout << value << " ";
+        }
+        cout << endl;
+    }
+}
+
+int main() {
+    string filename = "data.csv"; // File to read/write
+    vector<vector<string>> data = readCSV(filename);
+
+    cout << "Original CSV Data:" << endl;
+    displayCSV(data);
+
+    // Add a new row to the data
+    vector<string> newRow = {"John", "Doe", "30", "Engineer"};
+    data.push_back(newRow);
+
+    cout << "\nModified CSV Data:" << endl;
+    displayCSV(data);
+
+    // Write the modified data back to the file
+    writeCSV(filename, data);
+
+    cout << "\nData written to " << filename << " successfully!" << endl;
+
+    return 0;
+}
+
